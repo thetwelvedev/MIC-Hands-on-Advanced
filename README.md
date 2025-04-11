@@ -23,7 +23,7 @@
 
 ## Etapas do Hands-on Avançado
 
-- [ ] Sprint 0
+- [x] Sprint 0
 - [ ] Sprint 1
 - [ ] Sprint 2
 - [ ] Sprint 3
@@ -33,10 +33,12 @@
 ![Organograma](/Pictures/organograma-arkham.png)
 
 ## Projeto Montado
+![Prototipo](/Pictures/Proto-v1.jpeg)
 
 ## Documentos
 
 ### Big Picture
+![Big Picture](/Pictures/Big-picture-arkham.png)
 
 ### Plano de Teste
 
