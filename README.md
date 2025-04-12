@@ -46,7 +46,7 @@
 
 ### Documento de Requisitos Funcionais
 
-### Documento de Progresso.
+### Documento de Progresso
 
 ### Esquema de Conexões
 
