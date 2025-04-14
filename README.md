@@ -3,17 +3,14 @@
 **Componentes**: [Leonardo Castro](https://github.com/thetwelvedev), [Arthur Ramos](https://github.com/ArthurRamos26) e [Lucas Gabriel](https://github.com/lucasrocha777)
 
 ## Índice
-- [ MIC-Hands-on-Advanced](#-mic-hands-on-advanced)
+- [ Monitoramento de Pacientes em Situação de Risco](#-monitoramento-de-pacientes-em-situação-de-risco)
   - [Índice](#índice)
   - [Etapas do Hands-on Avançado](#etapas-do-hands-on-avançado)
   - [Organograma](#organograma)
   - [Projeto Montado](#projeto-montado)
   - [Documentos](#documentos)
     - [Big Picture](#big-picture)
-    - [Plano de Teste](#plano-de-teste)
-    - [Documento de Definição de Pronto (DoD)](#documento-de-definição-de-pronto-dod)
     - [Documento de Requisitos Funcionais](#documento-de-requisitos-funcionais)
-    - [Documento de Progresso](#documento-de-progresso)
     - [Esquema de Conexões](#esquema-de-conexões)
       - [Pinagem](#pinagem)
       - [Esquema de Ligação](#esquema-de-ligação)
@@ -24,7 +21,7 @@
 ## Etapas do Hands-on Avançado
 
 - [x] Sprint 0
-- [ ] Sprint 1
+- [x] Sprint 1
 - [ ] Sprint 2
 - [ ] Sprint 3
 - [ ] Apresentação
@@ -40,13 +37,8 @@
 ### Big Picture
 ![Big Picture](/Pictures/Big-picture-arkham.png)
 
-### Plano de Teste
-
-### Documento de Definição de Pronto (DoD)
-
 ### Documento de Requisitos Funcionais
-
-### Documento de Progresso
+[Acesse aqui](/Docs/Requisitos%20Funcionais_Maloca.Equipe_Arkhamdocx.pdf)
 
 ### Esquema de Conexões
 
