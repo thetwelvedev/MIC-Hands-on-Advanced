@@ -36,7 +36,7 @@ void loop() {
   // Verificar se há dedo no sensor
   if (irValue > 50000) {
     // Detectando batimento cardíaco
-    if (checkForBeat(irValue) {
+    if (checkForBeat(irValue)) {
       long delta = millis() - lastBeat;
       lastBeat = millis();
 
@@ -73,7 +73,7 @@ void loop() {
     Serial.println("Sem dedo no sensor...");
   }
 
-  delay(20); // Pequeno atraso para estabilidade
+  delay(1000); // Pequeno atraso para estabilidade
 }
 /*
 Pré-requisitos:
