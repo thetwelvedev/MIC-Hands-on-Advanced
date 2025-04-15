@@ -73,7 +73,7 @@ void loop() {
     Serial.println("Sem dedo no sensor...");
   }
 
-  delay(1000); // Pequeno atraso para estabilidade
+  delay(20); // Pequeno atraso para estabilidade
 }
 /*
 Pré-requisitos:
