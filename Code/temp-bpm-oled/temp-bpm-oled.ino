@@ -68,11 +68,25 @@ void loop() {
   
   // Ler batimento cardíaco
   readHeartRate();
-  
+
+  // Mostrar dados no Serial Monitor
+  Serial.print("Temperatura crua: ");
+  Serial.print(rawTemp, 2);
+  Serial.print(" C | Calibrada: ");
+  Serial.print(calibratedTemp, 2);
+  Serial.print(" C | Estado: ");
+  Serial.println(overTemp ? "ALERTA!" : "Normal");
+
+  Serial.print("BPM Atual: ");
+  Serial.print((int)beatsPerMinute);
+  Serial.print(" | Média BPM: ");
+  Serial.println(beatAvg);
+  Serial.println("--------------------------");
+
   // Atualizar display
   updateDisplay(calibratedTemp, overTemp, (int)beatsPerMinute, beatAvg);
   
-  delay(100);
+  delay(1000); // Atraso para facilitar leitura no Serial Monitor
 }
 
 float readTemperature() {
@@ -173,7 +187,7 @@ void updateDisplay(float temperature, bool alert, int bpm, int avgBpm) {
   // Cabeçalho
   display.setTextSize(1);
   display.setCursor(0,0);
-  display.println("Monitor de Saude");
+  display.println("Monitoramento do Paciente");
   display.drawLine(0, 10, 127, 10, SSD1306_WHITE);
   
   // Temperatura
@@ -201,18 +215,6 @@ void updateDisplay(float temperature, bool alert, int bpm, int avgBpm) {
   display.print("Avg: ");
   display.setTextSize(2);
   display.print(avgBpm);
-  
-  // Status
-  display.setTextSize(1);
-  display.setCursor(0, 55);
-  display.print("Status: ");
-  if (alert) {
-    display.setTextColor(SSD1306_WHITE, SSD1306_BLACK);
-    display.print("ALERTA!");
-    display.setTextColor(SSD1306_WHITE);
-  } else {
-    display.print("Normal");
-  }
   
   display.display();
 }
