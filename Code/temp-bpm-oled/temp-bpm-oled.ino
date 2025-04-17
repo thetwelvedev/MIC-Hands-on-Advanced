@@ -187,7 +187,7 @@ void updateDisplay(float temperature, bool alert, int bpm, int avgBpm) {
   // Cabeçalho
   display.setTextSize(1);
   display.setCursor(0,0);
-  display.println("Monitoramento do Paciente");
+  display.println("Dados do Paciente");
   display.drawLine(0, 10, 127, 10, SSD1306_WHITE);
   
   // Temperatura
