@@ -133,28 +133,38 @@ void setupHeartSensor() {
 void readHeartRate() {
   long irValue = particleSensor.getIR();
 
+  // Verificar se há dedo no sensor
   if (irValue > 50000) {
+    // Detectando batimento cardíaco
     if (checkForBeat(irValue)) {
       long delta = millis() - lastBeat;
       lastBeat = millis();
+
       beatsPerMinute = 60 / (delta / 1000.0);
 
-      if (beatsPerMinute > 20 && beatsPerMinute < 255) {
+      if (beatsPerMinute < 255 && beatsPerMinute > 20) {
         rates[rateSpot++] = (byte)beatsPerMinute;
         rateSpot %= RATE_SIZE;
 
-        int total = 0;
-        for (byte i = 0; i < RATE_SIZE; i++) total += rates[i];
-        beatAvg = total / RATE_SIZE;
+        // Calcular média
+        beatAvg = 0;
+        for (byte x = 0; x < RATE_SIZE; x++)
+          beatAvg += rates[x];
+        beatAvg /= RATE_SIZE;
       }
     }
   } else {
-    beatsPerMinute = 0;
+    // Sem dedo no sensor
     beatAvg = 0;
+    beatsPerMinute = 0;
     rateSpot = 0;
     lastBeat = 0;
-    for (byte i = 0; i < RATE_SIZE; i++) rates[i] = 0;
+    
+    for (byte x = 0; x < RATE_SIZE; x++)
+      rates[x] = 0;
   }
+
+  delay(20); // Pequeno atraso para estabilidade
 }
 
 void updateDisplay(float temperature, bool alert, int bpm, int avgBpm) {
