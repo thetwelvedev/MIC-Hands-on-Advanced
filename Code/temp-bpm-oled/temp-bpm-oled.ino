@@ -4,29 +4,30 @@
 #include "MAX30105.h"
 #include "heartRate.h"
 
-// Configurações do MAX30205
+// Endereço I2C do MAX30205
 const uint8_t MAX30205_ADDRESS = 0x48;
-const int OS_PIN = 23;
 
-// Configurações do OLED
+// Definições do display OLED
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define OLED_RESET -1
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-// Configurações do MAX30102
+// Objeto do sensor de batimento
 MAX30105 particleSensor;
-const byte RATE_SIZE = 4; // Média de 4 leituras
-byte rates[RATE_SIZE];     // Array de leituras de batimentos
+
+// Buffer para cálculo de média dos batimentos
+const byte RATE_SIZE = 4;
+byte rates[RATE_SIZE];
 byte rateSpot = 0;
-long lastBeat = 0;        // Tempo do último batimento
+long lastBeat = 0;
 float beatsPerMinute;
 int beatAvg;
 
-// Variáveis de calibração
+// Variável de calibração da temperatura
 float calibrationOffset = 37.0;
 
-// Declarações antecipadas das funções
+// Funções auxiliares
 float readTemperature();
 void calibrateSensor();
 void updateDisplay(float temperature, bool alert, int bpm, int avgBpm);
@@ -35,186 +36,164 @@ void readHeartRate();
 
 void setup() {
   Serial.begin(115200);
-  
-  // Inicializa I2C para os sensores
-  Wire.begin(21, 22); // SDA=GPIO21, SCL=GPIO22
-  
-  // Inicializa o pino OS do MAX30205
-  pinMode(OS_PIN, INPUT);
-  
-  // Inicializa o display OLED
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-    Serial.println(F("Falha na alocação do SSD1306"));
-    for(;;);
+  Wire.begin(21, 22); // SDA, SCL para ESP32
+
+  // Inicializa o display
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println(F("Falha na inicialização do OLED"));
+    while (true);
   }
-  
+
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
-  display.setCursor(0,0);
-  display.println("Inicializando...");
+  display.setCursor(0, 0);
+  display.println("Inicializando sensores...");
   display.display();
   delay(2000);
-  
-  calibrateSensor();
-  setupHeartSensor();
+
+  calibrateSensor();     // Calibra o sensor de temperatura
+  setupHeartSensor();    // Inicia o sensor MAX30102
 }
 
 void loop() {
-  // Ler temperatura
   float rawTemp = readTemperature();
   float calibratedTemp = rawTemp + calibrationOffset;
-  bool overTemp = digitalRead(OS_PIN);
-  
-  // Ler batimento cardíaco
-  readHeartRate();
+  bool overTemp = calibratedTemp >= 38.0; // Febre se >= 38 °C
 
-  // Mostrar dados no Serial Monitor
-  Serial.print("Temperatura crua: ");
+  readHeartRate(); // Atualiza BPM e média
+
+  Serial.print("Temp (raw): ");
   Serial.print(rawTemp, 2);
   Serial.print(" C | Calibrada: ");
   Serial.print(calibratedTemp, 2);
-  Serial.print(" C | Estado: ");
-  Serial.println(overTemp ? "ALERTA!" : "Normal");
+  Serial.print(" C | ");
+  Serial.println(overTemp ? "ALERTA: FEBRE!" : "Normal");
 
-  Serial.print("BPM Atual: ");
+  Serial.print("BPM: ");
   Serial.print((int)beatsPerMinute);
-  Serial.print(" | Média BPM: ");
+  Serial.print(" | Média: ");
   Serial.println(beatAvg);
-  Serial.println("--------------------------");
+  Serial.println("------------------------");
 
-  // Atualizar display
   updateDisplay(calibratedTemp, overTemp, (int)beatsPerMinute, beatAvg);
-  
-  delay(1000); // Atraso para facilitar leitura no Serial Monitor
+
+  delay(1000); // Atualização a cada 1s
 }
 
 float readTemperature() {
   Wire.beginTransmission(MAX30205_ADDRESS);
   Wire.write(0x00);
-  if (Wire.endTransmission(false) != 0) {
-    return -1;
-  }
-  
+  if (Wire.endTransmission(false) != 0) return -1;
+
   Wire.requestFrom(MAX30205_ADDRESS, 2);
-  if (Wire.available() >= 2) {
-    uint8_t msb = Wire.read();
-    uint8_t lsb = Wire.read();
-    int16_t raw = (msb << 8) | lsb;
-    return raw * 0.00390625;
-  }
-  return -1;
+  if (Wire.available() < 2) return -1;
+
+  uint8_t msb = Wire.read();
+  uint8_t lsb = Wire.read();
+  int16_t raw = (msb << 8) | lsb;
+  return raw * 0.00390625;
 }
 
 void calibrateSensor() {
-  Serial.println("Calibrando sensor... aguarde 10 segundos");
+  Serial.println("Calibrando temperatura... Aguarde 10s");
   delay(10000);
-  
+
   float sum = 0;
   int readings = 10;
-  
   for (int i = 0; i < readings; i++) {
-    float temp = readTemperature();
-    if (temp != -1) {
-      sum += temp;
-    }
+    float t = readTemperature();
+    if (t != -1) sum += t;
     delay(100);
   }
-  
-  float avgRawTemp = sum / readings;
-  calibrationOffset = 25.0 - avgRawTemp;
-  
-  Serial.print("Offset de calibração calculado: ");
+
+  float avg = sum / readings;
+  calibrationOffset = 25.0 - avg;
+
+  Serial.print("Offset calculado: ");
   Serial.print(calibrationOffset, 2);
-  Serial.println(" °C");
+  Serial.println(" C");
 }
 
 void setupHeartSensor() {
-  Serial.println("Inicializando sensor MAX30102...");
+  Serial.println("Iniciando sensor MAX30102...");
 
-  // Inicializar o sensor
   if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
-    Serial.println("MAX30102 não encontrado. Verifique as conexões!");
-    while (1);
+    Serial.println("Erro: MAX30102 não encontrado.");
+    while (true);
   }
 
-  // Configurar o sensor
-  particleSensor.setup(); // Padrão: LED brilho=50, amostra média=4, amostras/s=100
-  particleSensor.setPulseAmplitudeRed(0x0A); // Reduzir o brilho do LED vermelho
-  particleSensor.setPulseAmplitudeGreen(0);  // Desligar LED verde (não usado)
+  particleSensor.setup();
+  particleSensor.setPulseAmplitudeRed(0x0A); // LED vermelho
+  particleSensor.setPulseAmplitudeGreen(0);  // Desliga LED verde
 
-  Serial.println("Coloque seu dedo no sensor com leve pressão...");
+  Serial.println("Aproxime o dedo do sensor.");
 }
 
 void readHeartRate() {
   long irValue = particleSensor.getIR();
 
-  // Verificar se há dedo no sensor
   if (irValue > 50000) {
-    // Detectando batimento cardíaco
     if (checkForBeat(irValue)) {
       long delta = millis() - lastBeat;
       lastBeat = millis();
-
       beatsPerMinute = 60 / (delta / 1000.0);
 
-      if (beatsPerMinute < 255 && beatsPerMinute > 20) {
+      if (beatsPerMinute > 20 && beatsPerMinute < 255) {
         rates[rateSpot++] = (byte)beatsPerMinute;
         rateSpot %= RATE_SIZE;
 
-        // Calcular média
-        beatAvg = 0;
-        for (byte x = 0; x < RATE_SIZE; x++)
-          beatAvg += rates[x];
-        beatAvg /= RATE_SIZE;
+        int total = 0;
+        for (byte i = 0; i < RATE_SIZE; i++) total += rates[i];
+        beatAvg = total / RATE_SIZE;
       }
     }
   } else {
-    // Sem dedo no sensor
-    beatAvg = 0;
     beatsPerMinute = 0;
+    beatAvg = 0;
     rateSpot = 0;
     lastBeat = 0;
-    
-    for (byte x = 0; x < RATE_SIZE; x++)
-      rates[x] = 0;
+    for (byte i = 0; i < RATE_SIZE; i++) rates[i] = 0;
   }
 }
 
 void updateDisplay(float temperature, bool alert, int bpm, int avgBpm) {
   display.clearDisplay();
-  
-  // Cabeçalho
   display.setTextSize(1);
-  display.setCursor(0,0);
+  display.setCursor(0, 0);
   display.println("Dados do Paciente");
   display.drawLine(0, 10, 127, 10, SSD1306_WHITE);
-  
+
   // Temperatura
-  display.setTextSize(1);
   display.setCursor(0, 15);
+  display.setTextSize(1);
   display.print("Temp: ");
   display.setTextSize(2);
   display.print(temperature, 1);
-  display.print(" ");
-  display.setTextSize(1);
-  display.cp437(true);
-  display.write(167);
-  display.setTextSize(2);
+  display.print((char)247); // ° símbolo
   display.println("C");
-  
-  // Batimento cardíaco
+
+  // BPM
   display.setTextSize(1);
   display.setCursor(0, 35);
   display.print("BPM: ");
   display.setTextSize(2);
   display.print(bpm);
-  
+
   display.setTextSize(1);
   display.setCursor(70, 35);
   display.print("Avg: ");
   display.setTextSize(2);
   display.print(avgBpm);
-  
+
+  // Alerta de temperatura alta
+  if (alert) {
+    display.setTextSize(1);
+    display.setCursor(0, 55);
+    display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); // Texto invertido
+    display.print(" Febre detectada! ");
+    display.setTextColor(SSD1306_WHITE);
+  }
+
   display.display();
 }
