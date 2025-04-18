@@ -35,7 +35,7 @@
 ## Documentos
 
 ### Big Picture
-![Big Picture](/Pictures/Big-picture-arkham.png)
+![Big Picture](/Pictures/big-picture-arkham.png)
 
 ### Documento de Requisitos Funcionais
 [Acesse aqui](/Docs/Requisitos%20Funcionais_Maloca.Equipe_Arkhamdocx.pdf)
