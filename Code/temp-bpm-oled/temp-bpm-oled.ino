@@ -207,3 +207,10 @@ void updateDisplay(float temperature, bool alert, int bpm, int avgBpm) {
 
   display.display();
 }
+/*
+Display OLED:
+VCC: 3.3V do ESP32
+GND: GND do ESP32
+SDA: Pino GPIO21
+SCL: Pino GPIO22 
+*/

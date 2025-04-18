@@ -76,16 +76,9 @@ void loop() {
   delay(20); // Pequeno atraso para estabilidade
 }
 /*
-Pré-requisitos:
-Biblioteca "MAX30105 by SparkFun" (instale via Arduino Library Manager)
-
-Conexões corretas entre o ESP32 e o MAX30102:
-
+Conexões do MAX30102:
 VIN: 3.3V do ESP32
-
 GND: GND do ESP32
-
-SDA: Pino GPIO21 (padrão)
-
-SCL: Pino GPIO22 (padrão)
+SDA: Pino GPIO21
+SCL: Pino GPIO22
 */

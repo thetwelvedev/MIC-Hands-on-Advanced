@@ -80,16 +80,13 @@ void calibrateSensor() {
   Serial.println(" °C");
 }
 /*
-Pré-requisitos:
-Biblioteca "MAX30105 by SparkFun" (instale via Arduino Library Manager)
+Conexões do CJMU-30205:
 
-Conexões corretas entre o ESP32 e o MAX30102:
-
-VIN: 3.3V do ESP32
-
+VCC: 3.3V do ESP32
 GND: GND do ESP32
-
-SDA: Pino GPIO21 (padrão)
-
-SCL: Pino GPIO22 (padrão)
+SDA: Pino GPIO21
+SCL: Pino GPIO22 
+A0: GND do ESP32
+A1: GND do ESP32
+A2: GND do ESP32
 */

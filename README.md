@@ -43,11 +43,41 @@
 ### Esquema de Conexões
 
 #### Pinagem
-<!--
-| **Componente**                         | **Pino ESP32** | **Descrição**               |
-|----------------------------------------|--------------|---------------------------|
-|  |  |  |
--->
+
+**Conexões do MAX30102**  
+
+| **Componente**       | **Pino ESP32** | **Descrição**                          |
+|----------------------|---------------|----------------------------------------|
+| **VIN (VCC)**        | 3.3V          | Alimentação (3.3V do ESP32)            |
+| **GND**              | GND           | Terra (compartilhado com o ESP32)      |
+| **SDA**              | GPIO21        | Dados I²C (barramento compartilhado)   |
+| **SCL**              | GPIO22        | Clock I²C (barramento compartilhado)   |
+
+---
+
+**Tabela 2: Conexões do CJMU-30205**  
+
+| **Componente**       | **Pino ESP32** | **Descrição**                          |
+|----------------------|---------------|----------------------------------------|
+| **VCC**              | 3.3V          | Alimentação (3.3V do ESP32)            |
+| **GND**              | GND           | Terra (compartilhado com o ESP32)      |
+| **SDA**              | GPIO21        | Dados I²C (barramento compartilhado)   |
+| **SCL**              | GPIO22        | Clock I²C (barramento compartilhado)   |
+| **A0**               | GND           | Configura endereço I²C (padrão)        |
+| **A1**               | GND           | Configura endereço I²C (padrão)        |
+| **A2**               | GND           | Configura endereço I²C (padrão)        |
+
+---
+
+**Tabela 3: Conexões do Display OLED (I²C)**  
+
+| **Componente**       | **Pino ESP32** | **Descrição**                          |
+|----------------------|---------------|----------------------------------------|
+| **VCC**              | 3.3V          | Alimentação (3.3V do ESP32)            |
+| **GND**              | GND           | Terra (compartilhado com o ESP32)      |
+| **SDA**              | GPIO21        | Dados I²C (barramento compartilhado)   |
+| **SCL**              | GPIO22        | Clock I²C (barramento compartilhado)   |
+
 #### Esquema de Ligação
 
 ## Códigos
