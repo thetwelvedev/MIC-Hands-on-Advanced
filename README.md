@@ -42,6 +42,10 @@
 
 ### Esquema de Conexões
 
+#### Esquema de Ligação
+
+![Esquema de conexão](/Pictures/Esquema%20de%20Conexão.png)
+
 #### Pinagem
 
 **Conexões do MAX30102**  
@@ -55,7 +59,7 @@
 
 ---
 
-**Tabela 2: Conexões do CJMU-30205**  
+**Conexões do CJMU-30205**  
 
 | **Componente**       | **Pino ESP32** | **Descrição**                          |
 |----------------------|---------------|----------------------------------------|
@@ -69,7 +73,7 @@
 
 ---
 
-**Tabela 3: Conexões do Display OLED (I²C)**  
+**Conexões do Display OLED (I²C)**  
 
 | **Componente**       | **Pino ESP32** | **Descrição**                          |
 |----------------------|---------------|----------------------------------------|
@@ -77,8 +81,6 @@
 | **GND**              | GND           | Terra (compartilhado com o ESP32)      |
 | **SDA**              | GPIO21        | Dados I²C (barramento compartilhado)   |
 | **SCL**              | GPIO22        | Clock I²C (barramento compartilhado)   |
-
-#### Esquema de Ligação
 
 ## Códigos
 
