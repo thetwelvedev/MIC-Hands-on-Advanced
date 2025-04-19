@@ -1,8 +1,5 @@
-var admin = require("firebase-admin");
+import firebase_admin
+from firebase_admin import credentials
 
-var serviceAccount = require("path/to/serviceAccountKey.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://monitoramento-bpm-e-temp-default-rtdb.firebaseio.com"
-});
+cred = credentials.Certificate("path/to/serviceAccountKey.json")
+firebase_admin.initialize_app(cred)
