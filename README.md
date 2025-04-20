@@ -12,8 +12,8 @@
     - [Big Picture](#big-picture)
     - [Documento de Requisitos Funcionais](#documento-de-requisitos-funcionais)
     - [Esquema de Conexões](#esquema-de-conexões)
-      - [Pinagem](#pinagem)
       - [Esquema de Ligação](#esquema-de-ligação)
+      - [Pinagem](#pinagem)
   - [Códigos](#códigos)
     - [Código do Circuito](#código-do-circuito)
     - [Código do Dashboard](#código-do-dashboard)
@@ -23,8 +23,8 @@
 - [x] Sprint 0
 - [x] Sprint 1
 - [x] Sprint 2
-- [ ] Sprint 3
-- [ ] Apresentação
+- [x] Sprint 3
+- [ ] Apresentação - dia 25/04
 
 ## Organograma
 ![Organograma](/Pictures/organograma-arkham.png)
