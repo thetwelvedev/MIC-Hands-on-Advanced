@@ -14,9 +14,6 @@
     - [Esquema de Conexões](#esquema-de-conexões)
       - [Esquema de Ligação](#esquema-de-ligação)
       - [Pinagem](#pinagem)
-  - [Códigos](#códigos)
-    - [Código do Circuito](#código-do-circuito)
-    - [Código do Dashboard](#código-do-dashboard)
 
 ## Etapas do Hands-on Avançado
 
@@ -82,9 +79,9 @@
 | **SDA**              | GPIO21        | Dados I²C (barramento compartilhado)   |
 | **SCL**              | GPIO22        | Clock I²C (barramento compartilhado)   |
 
-## Códigos
+<!-- ## Códigos
 
 ### Código do Circuito
 
 ### Código do Dashboard
-
+-->
