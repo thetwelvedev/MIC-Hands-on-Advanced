@@ -194,7 +194,7 @@ void updateDisplay(float temperature, bool alert, int bpm, int avgBpm, int spo2)
   
   // SpO2
   display.setTextSize(1);
-  display.setCursor(60, 15);
+  display.setCursor(65, 15);
   display.print("SpO2:");
   display.setTextSize(1);
   display.print(spo2);
@@ -217,3 +217,4 @@ void updateDisplay(float temperature, bool alert, int bpm, int avgBpm, int spo2)
 
   display.display();
 }
+/* Rodar de teste*/
