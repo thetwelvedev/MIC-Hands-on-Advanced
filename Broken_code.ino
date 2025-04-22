@@ -6,8 +6,8 @@
 #include <Firebase_ESP_Client.h>
 #include <WiFi.h>
 
-// Configurações do Firebase
-#define API_KEY "YUqCN9J30XHtgZIQAb4PdcHMck1rV08HlGDC8LvW"
+// Configurações do Firebase (atualizadas para match com web app)
+#define API_KEY "AIzaSyBVGj2xscYqKJSPhial0B22DdrsT_KPiAQ"
 #define DATABASE_URL "https://monitoramento-bpm-e-temp-default-rtdb.firebaseio.com/"
 
 // Configurações de rede
@@ -42,12 +42,12 @@ unsigned long lastDisplayUpdate = 0;
 float currentTemperature = 0.0;
 bool fingerDetected = false;
 
-// Declarações de funções (PROTÓTIPOS)
+// Protótipos de função
 void showSplashScreen(const char* message);
 void connectToWiFi();
 void setupFirebase();
 bool initializeHardware();
-void calibrateTemperatureSensor();  // Adicionado protótipo da função
+void calibrateTemperatureSensor();
 float readTemperature();
 void updateSensorData();
 void updateHeartRate();
@@ -95,20 +95,19 @@ void setup() {
   updateDisplay();
 }
 
-
 void loop() {
   // Verificar conexão WiFi periodicamente
   if (millis() % 5000 == 0 && WiFi.status() != WL_CONNECTED) {
     connectToWiFi();
   }
 
-  // Atualizar sensores a cada 100ms (mais frequente para melhor detecção)
+  // Atualizar sensores a cada 100ms
   if (millis() - lastSensorRead >= 100) {
     lastSensorRead = millis();
     updateSensorData();
   }
 
-  // Atualizar display a cada 250ms para maior responsividade
+  // Atualizar display a cada 250ms
   if (millis() - lastDisplayUpdate >= 250) {
     lastDisplayUpdate = millis();
     updateDisplay();
@@ -151,7 +150,7 @@ void showSplashScreen(const char* message) {
   display.setCursor(0, 0);
   display.println(message);
   display.display();
-  delay(1000); // Mostra por 1 segundo
+  delay(1000);
 }
 
 void connectToWiFi() {
@@ -194,10 +193,8 @@ bool initializeHardware() {
   
   // Configurar sensor MAX30102
   particleSensor.setup();
-  particleSensor.setPulseAmplitudeRed(0x0A); // Ajuste este valor conforme necessário
-  particleSensor.setPulseAmplitudeGreen(0); // Desligar LED verde
-  
-  // Configurar sensibilidade
+  particleSensor.setPulseAmplitudeRed(0x0A);
+  particleSensor.setPulseAmplitudeGreen(0);
   particleSensor.enableDIETEMPRDY();
   
   // Verificar sensor de temperatura
@@ -210,7 +207,6 @@ bool initializeHardware() {
     Serial.print(error);
     Serial.println("). Tentando endereço alternativo 0x49...");
     
-    // Tentar endereço alternativo comum para MAX30205
     Wire.beginTransmission(0x49);
     error = Wire.endTransmission();
     
@@ -229,7 +225,7 @@ bool initializeHardware() {
 
 float readTemperature() {
   Wire.beginTransmission(MAX30205_ADDRESS);
-  Wire.write(0x00); // Registro de temperatura
+  Wire.write(0x00);
   byte error = Wire.endTransmission(false);
   
   if (error != 0) {
@@ -238,7 +234,7 @@ float readTemperature() {
     return -999;
   }
 
-  delay(10); // Tempo para o sensor preparar os dados
+  delay(10);
 
   if (Wire.requestFrom(MAX30205_ADDRESS, 2) != 2) {
     Serial.println("Dados insuficientes do MAX30205");
@@ -248,9 +244,8 @@ float readTemperature() {
   uint8_t msb = Wire.read();
   uint8_t lsb = Wire.read();
   int16_t raw = (msb << 8) | lsb;
-  float temp = raw * 0.00390625; // Conversão para Celsius
+  float temp = raw * 0.00390625;
 
-  // Verificação de valores plausíveis
   if (temp < 20.0 || temp > 45.0) {
     Serial.print("Temperatura fora do range esperado: ");
     Serial.println(temp);
@@ -264,7 +259,7 @@ void updateSensorData() {
   // Atualizar temperatura
   float rawTemp = readTemperature();
   
-  if (rawTemp > -900) { // Se leitura válida
+  if (rawTemp > -900) {
     currentTemperature = rawTemp + calibrationOffset;
   } else {
     Serial.println("Leitura inválida de temperatura");
@@ -287,7 +282,6 @@ void updateSensorData() {
 void updateHeartRate() {
   long irValue = particleSensor.getIR();
   
-  // Exibir valor IR para debug
   static unsigned long lastIRPrint = 0;
   if (millis() - lastIRPrint > 1000) {
     lastIRPrint = millis();
@@ -295,7 +289,7 @@ void updateHeartRate() {
     Serial.println(irValue);
   }
 
-  if (irValue > 50000) { // Dedo detectado
+  if (irValue > 50000) {
     fingerDetected = true;
     
     if (checkForBeat(irValue)) {
@@ -309,7 +303,6 @@ void updateHeartRate() {
           rates[rateSpot++] = (byte)beatsPerMinute;
           rateSpot %= RATE_SIZE;
 
-          // Calcular média
           beatAvg = 0;
           for (byte x = 0; x < RATE_SIZE; x++) {
             beatAvg += rates[x];
@@ -318,7 +311,7 @@ void updateHeartRate() {
         }
       }
     }
-  } else { // Sem dedo
+  } else {
     fingerDetected = false;
     resetHeartRate();
   }
@@ -333,6 +326,7 @@ void resetHeartRate() {
     rates[x] = 0;
   }
 }
+
 void calibrateTemperatureSensor() {
   Serial.println("Calibrando sensor de temperatura...");
   
@@ -341,7 +335,7 @@ void calibrateTemperatureSensor() {
   
   for (int i = 0; i < 20; i++) {
     float temp = readTemperature();
-    if (temp > -900) { // Ignorar erros
+    if (temp > -900) {
       sum += temp;
       validReadings++;
       showSplashScreen("Calibrando...");
@@ -359,6 +353,7 @@ void calibrateTemperatureSensor() {
     calibrationOffset = 0.0;
   }
 }
+
 void updateDisplay() {
   display.clearDisplay();
   
@@ -422,7 +417,7 @@ void sendToFirebase() {
     return;
   }
 
-  if (currentTemperature < -900) return; // Ignorar se leitura inválida
+  if (currentTemperature < -900) return;
 
   FirebaseJson json;
   json.set("temperatura", currentTemperature);
