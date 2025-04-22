@@ -3,6 +3,7 @@
 #include <Adafruit_SSD1306.h>
 #include "MAX30105.h"
 #include "heartRate.h"
+#include "spo2_algorithm.h"
 
 // Endereço I2C do MAX30205
 const uint8_t MAX30205_ADDRESS = 0x48;
@@ -13,7 +14,7 @@ const uint8_t MAX30205_ADDRESS = 0x48;
 #define OLED_RESET -1
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-// Objeto do sensor de batimento
+// Objeto do sensor MAX30102
 MAX30105 particleSensor;
 
 // Buffer para cálculo de média dos batimentos
@@ -24,15 +25,26 @@ long lastBeat = 0;
 float beatsPerMinute;
 int beatAvg;
 
+// Variáveis para SpO2
+#define MAX_BRIGHTNESS 255
+uint32_t irBuffer[100]; //infrared LED sensor data
+uint32_t redBuffer[100];  //red LED sensor data
+int32_t bufferLength; //data length
+int32_t spo2; //SPO2 value
+int8_t validSPO2; //indicator to show if the SPO2 calculation is valid
+int32_t heartRate; //heart rate value
+int8_t validHeartRate; //indicator to show if the heart rate calculation is valid
+
 // Variável de calibração da temperatura
 float calibrationOffset = 37.0;
 
 // Funções auxiliares
 float readTemperature();
 void calibrateSensor();
-void updateDisplay(float temperature, bool alert, int bpm, int avgBpm);
+void updateDisplay(float temperature, bool alert, int bpm, int avgBpm, int spo2);
 void setupHeartSensor();
 void readHeartRate();
+void readSpO2();
 
 void setup() {
   Serial.begin(115200);
@@ -62,6 +74,7 @@ void loop() {
   bool overTemp = calibratedTemp >= 38.0; // Febre se >= 38 °C
 
   readHeartRate(); // Atualiza BPM e média
+  readSpO2();     // Atualiza SpO2
 
   Serial.print("Temp (raw): ");
   Serial.print(rawTemp, 2);
@@ -73,10 +86,13 @@ void loop() {
   Serial.print("BPM: ");
   Serial.print((int)beatsPerMinute);
   Serial.print(" | Média: ");
-  Serial.println(beatAvg);
+  Serial.print(beatAvg);
+  Serial.print(" | SpO2: ");
+  Serial.print(spo2);
+  Serial.println("%");
   Serial.println("------------------------");
 
-  updateDisplay(calibratedTemp, overTemp, (int)beatsPerMinute, beatAvg);
+  updateDisplay(calibratedTemp, overTemp, (int)beatsPerMinute, beatAvg, spo2);
 
   delay(1000); // Atualização a cada 1s
 }
@@ -123,9 +139,16 @@ void setupHeartSensor() {
     while (true);
   }
 
-  particleSensor.setup();
-  particleSensor.setPulseAmplitudeRed(0x0A); // LED vermelho
-  particleSensor.setPulseAmplitudeGreen(0);  // Desliga LED verde
+  // Configuração para SpO2
+  byte ledBrightness = 60; //Options: 0=Off to 255=50mA
+  byte sampleAverage = 4; //Options: 1, 2, 4, 8, 16, 32
+  byte ledMode = 2; //Options: 1 = Red only, 2 = Red + IR, 3 = Red + IR + Green
+  byte sampleRate = 100; //Options: 50, 100, 200, 400, 800, 1000, 1600, 3200
+  int pulseWidth = 411; //Options: 69, 118, 215, 411
+  int adcRange = 4096; //Options: 2048, 4096, 8192, 16384
+
+  particleSensor.setup(ledBrightness, sampleAverage, ledMode, sampleRate, pulseWidth, adcRange);
+  particleSensor.enableDIETEMPRDY();
 
   Serial.println("Aproxime o dedo do sensor.");
 }
@@ -163,11 +186,53 @@ void readHeartRate() {
     for (byte x = 0; x < RATE_SIZE; x++)
       rates[x] = 0;
   }
-
-  delay(20); // Pequeno atraso para estabilidade
 }
 
-void updateDisplay(float temperature, bool alert, int bpm, int avgBpm) {
+void readSpO2() {
+  bufferLength = 100; //buffer length of 100 stores 4 seconds of samples running at 25sps
+
+  //read the first 100 samples, and determine the signal range
+  for (byte i = 0 ; i < bufferLength ; i++) {
+    while (particleSensor.available() == false) //do we have new data?
+      particleSensor.check(); //Check the sensor for new data
+
+    redBuffer[i] = particleSensor.getRed();
+    irBuffer[i] = particleSensor.getIR();
+    particleSensor.nextSample(); //We're finished with this sample so move to next sample
+  }
+
+  //calculate heart rate and SpO2 after first 100 samples (first 4 seconds of samples)
+  maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate);
+
+  //Continuously taking samples from MAX30102.  Heart rate and SpO2 are calculated every 1 second
+  while (1) {
+    //dumping the first 25 sets of samples in the memory and shift the last 75 sets of samples to the top
+    for (byte i = 25; i < 100; i++) {
+      redBuffer[i - 25] = redBuffer[i];
+      irBuffer[i - 25] = irBuffer[i];
+    }
+
+    //take 25 sets of samples before calculating the heart rate.
+    for (byte i = 75; i < 100; i++) {
+      while (particleSensor.available() == false) //do we have new data?
+        particleSensor.check(); //Check the sensor for new data
+
+      redBuffer[i] = particleSensor.getRed();
+      irBuffer[i] = particleSensor.getIR();
+      particleSensor.nextSample(); //We're finished with this sample so move to next sample
+    }
+
+    //After gathering 25 new samples recalculate HR and SP02
+    maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate);
+    
+    // Se não temos um valor válido, saímos do loop
+    if (validSPO2 && validHeartRate) {
+      break;
+    }
+  }
+}
+
+void updateDisplay(float temperature, bool alert, int bpm, int avgBpm, int spo2) {
   display.clearDisplay();
   display.setTextSize(1);
   display.setCursor(0, 0);
@@ -177,40 +242,41 @@ void updateDisplay(float temperature, bool alert, int bpm, int avgBpm) {
   // Temperatura
   display.setCursor(0, 15);
   display.setTextSize(1);
-  display.print("Temp: ");
-  display.setTextSize(2);
+  display.print("Temp:");
+  display.setTextSize(1);
   display.print(temperature, 1);
   display.print((char)247); // ° símbolo
   display.println("C");
 
+  // SpO2
+  display.setTextSize(1);
+  display.setCursor(70, 15);
+  display.print("SpO2:");
+  display.setTextSize(1);
+  display.print(spo2);
+  display.println("%");
+
   // BPM
   display.setTextSize(1);
-  display.setCursor(0, 35);
-  display.print("BPM: ");
-  display.setTextSize(2);
+  display.setCursor(1, 30);
+  display.print("BPM:");
+  display.setTextSize(0);
   display.print(bpm);
 
+  // Média BPM
   display.setTextSize(1);
-  display.setCursor(70, 35);
-  display.print("Avg: ");
-  display.setTextSize(2);
+  display.setCursor(70, 30);
+  display.print("Avg BPM:");
   display.print(avgBpm);
 
   // Alerta de temperatura alta
   if (alert) {
     display.setTextSize(1);
-    display.setCursor(0, 55);
+    display.setCursor(70, 50);
     display.setTextColor(SSD1306_BLACK, SSD1306_WHITE); // Texto invertido
-    display.print(" Febre detectada! ");
+    display.print(" FEBRE ");
     display.setTextColor(SSD1306_WHITE);
   }
 
   display.display();
 }
-/*
-Display OLED:
-VCC: 3.3V do ESP32
-GND: GND do ESP32
-SDA: Pino GPIO21
-SCL: Pino GPIO22 
-*/
