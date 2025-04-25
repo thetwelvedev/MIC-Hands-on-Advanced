@@ -1,4 +1,4 @@
-# <img src="https://upload.wikimedia.org/wikipedia/commons/8/87/Arduino_Logo.svg" alt="Arduino Logo" width="40"> Monitoramento de Pacientes em Situação de Risco
+# <img src="/Pictures/logo-maloca.png" alt="Logo do Maloca das iCoisas" width="100"> Monitoramento de Pacientes em Situação de Risco
 
 **Componentes**: [Leonardo Castro](https://github.com/thetwelvedev), [Arthur Ramos](https://github.com/ArthurRamos26) e [Lucas Gabriel](https://github.com/lucasrocha777)
 
@@ -11,6 +11,7 @@
   - [Documentos](#documentos)
     - [Big Picture](#big-picture)
     - [Documento de Requisitos Funcionais](#documento-de-requisitos-funcionais)
+    - [Documento de Progresso](#documento-de-progresso)
     - [Esquema de Conexões](#esquema-de-conexões)
       - [Esquema de Ligação](#esquema-de-ligação)
       - [Pinagem](#pinagem)
@@ -27,7 +28,7 @@
 ![Organograma](/Pictures/organograma-arkham.png)
 
 ## Projeto Montado
-![Prototipo](/Pictures/Proto-v1.jpeg)
+![Prototipo](/Pictures/Proto-v3.jpg)
 
 ## Documentos
 
@@ -36,6 +37,9 @@
 
 ### Documento de Requisitos Funcionais
 [Acesse aqui](/Docs/Requisitos%20Funcionais_Maloca.Equipe_Arkhamdocx.pdf)
+
+### Documento de Progresso
+[Acesse aqui](/Docs/Documento%20de%20progresso%20Equipe%20Arkham.docx.pdf)
 
 ### Esquema de Conexões
 
@@ -54,7 +58,6 @@
 | **SDA**              | GPIO21        | Dados I²C (barramento compartilhado)   |
 | **SCL**              | GPIO22        | Clock I²C (barramento compartilhado)   |
 
----
 
 **Conexões do CJMU-30205**  
 
@@ -68,7 +71,6 @@
 | **A1**               | GND           | Configura endereço I²C (padrão)        |
 | **A2**               | GND           | Configura endereço I²C (padrão)        |
 
----
 
 **Conexões do Display OLED (I²C)**  
 
