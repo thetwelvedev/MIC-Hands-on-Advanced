@@ -1,9 +1,5 @@
-<div style="display: flex; align-items: center; gap: 10px;">
-  <img src="/Pictures/logo-arkham.png" alt="Logo do Maloca das iCoisas" width="100">
-  <span style="font-size: 26px; font-weight: bold;">Monitoramento de Pacientes em Situação de Risco</span></span>
-<img src="/Pictures/logo-maloca.png" alt="Logo do Parceiro" width="100"></div>
+# <img src="/Pictures/logo-arkham.png" alt="Logo do Maloca das iCoisas" width="100"> Monitoramento de Pacientes em Situação de Risco <img src="/Pictures/logo-maloca.png" alt="Logo do Parceiro" width="100"></div>
 
-<br>
 
 **Componentes**: [Leonardo Castro](https://github.com/thetwelvedev), [Arthur Ramos](https://github.com/ArthurRamos26) e [Lucas Gabriel](https://github.com/lucasrocha777)
 
