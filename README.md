@@ -16,6 +16,7 @@
   - [Big Picture](#big-picture)
   - [Documento de Requisitos Funcionais](#documento-de-requisitos-funcionais)
   - [Documento de Progresso](#documento-de-progresso)
+  - [Slide do Pitch](#slide-do-pitch)
   - [Esquema de Conexões](#esquema-de-conexões)
     - [Esquema de Ligação](#esquema-de-ligação)
     - [Pinagem](#pinagem)
@@ -44,6 +45,12 @@
 
 ### Documento de Progresso
 [Acesse aqui](/Docs/Documento%20de%20progresso%20Equipe%20Arkham.docx.pdf)
+
+### Slide do Pitch
+
+[Acesse aqui](/Slide/Slide%20-%20Monitoramento%20de%20Pacientes%20de%20Risco.pdf)
+
+[Veja completo](https://www.canva.com/design/DAGlCGJqn5o/cYMYZnWsSQK9ZPAXMBt4eg/edit?utm_content=DAGlCGJqn5o&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ### Esquema de Conexões
 
