@@ -1,20 +1,24 @@
-# <img src="/Pictures/logo-maloca.png" alt="Logo do Maloca das iCoisas" width="100"> Monitoramento de Pacientes em Situação de Risco
+<div style="display: flex; align-items: center; gap: 10px;">
+  <img src="/Pictures/logo-arkham.png" alt="Logo do Maloca das iCoisas" width="100">
+  <span style="font-size: 26px; font-weight: bold;">Monitoramento de Pacientes em Situação de Risco</span></span>
+<img src="/Pictures/logo-maloca.png" alt="Logo do Parceiro" width="100"></div>
+
+<br>
 
 **Componentes**: [Leonardo Castro](https://github.com/thetwelvedev), [Arthur Ramos](https://github.com/ArthurRamos26) e [Lucas Gabriel](https://github.com/lucasrocha777)
 
 ## Índice
-- [ Monitoramento de Pacientes em Situação de Risco](#-monitoramento-de-pacientes-em-situação-de-risco)
-  - [Índice](#índice)
-  - [Etapas do Hands-on Avançado](#etapas-do-hands-on-avançado)
-  - [Organograma](#organograma)
-  - [Projeto Montado](#projeto-montado)
-  - [Documentos](#documentos)
-    - [Big Picture](#big-picture)
-    - [Documento de Requisitos Funcionais](#documento-de-requisitos-funcionais)
-    - [Documento de Progresso](#documento-de-progresso)
-    - [Esquema de Conexões](#esquema-de-conexões)
-      - [Esquema de Ligação](#esquema-de-ligação)
-      - [Pinagem](#pinagem)
+- [Índice](#índice)
+- [Etapas do Hands-on Avançado](#etapas-do-hands-on-avançado)
+- [Organograma](#organograma)
+- [Projeto Montado](#projeto-montado)
+- [Documentos](#documentos)
+  - [Big Picture](#big-picture)
+  - [Documento de Requisitos Funcionais](#documento-de-requisitos-funcionais)
+  - [Documento de Progresso](#documento-de-progresso)
+  - [Esquema de Conexões](#esquema-de-conexões)
+    - [Esquema de Ligação](#esquema-de-ligação)
+    - [Pinagem](#pinagem)
 
 ## Etapas do Hands-on Avançado
 
